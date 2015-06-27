@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+
+{% block extrahead %}
+    <style>
+    #id_labyrinth {
+        font-family: monospace;
+    }
+    </style>
+
+{% endblock %}
+
+{% block title %}{{ title }} | {{ _('Social Labyrinths') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ _('Social Labyrinths') }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

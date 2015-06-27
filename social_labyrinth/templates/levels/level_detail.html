@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ level.title }}
+        {% if request.user == level.author %}
+            <a href="{% url "change_level" slug=level.slug %}"><span class="glyphicon glyphicon-pencil"></span></a>
+        {% endif %}
+    </h1>
+    {{ level.render_labyrinth }}
+    <script>
+        var labyrinth = JSON.parse('{{ level.render_labyrinth_json }}');
+    </script>
+{% endblock %}

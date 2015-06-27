@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <ul>
+    {% for level in levels %}
+        <li><a href="{% url "level_detail" slug=level.slug %}">{{ level.title }}</a> by {{ level.author.username }}</li>
+    {% endfor %}
+    </ul>
+    {% if request.user.is_authenticated %}
+        <p><a href="{% url "add_level" %}">Create labyrinth</a></p>
+    {% endif %}
+{% endblock %}
