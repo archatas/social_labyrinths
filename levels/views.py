@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
+from django.contrib.auth.decorators import login_required
 
 from crispy_forms.helper import FormHelper
 from crispy_forms import layout, bootstrap
@@ -29,6 +30,7 @@ class LevelForm(forms.ModelForm):
                 layout.Submit('submit', _('Save')),
             )
         )
+
     def save(self, commit=True):
         level = super(LevelForm, self).save(commit=False)
         level.author = self.request.user
@@ -48,6 +50,7 @@ def level_detail(request, slug):
     return render(request, 'levels/level_detail.html', {'level': level})
 
 
+@login_required
 def add_level(request):
     if request.method == "POST":
         form = LevelForm(request, data=request.POST)
@@ -59,6 +62,7 @@ def add_level(request):
     return render(request, 'levels/change_level.html', {'form': form})
 
 
+@login_required
 def change_level(request, slug):
     level = get_object_or_404(Level, slug=slug)
     if request.method == "POST":
