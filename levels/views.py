@@ -3,6 +3,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 
 from crispy_forms.helper import FormHelper
 from crispy_forms import layout, bootstrap
@@ -65,6 +66,8 @@ def add_level(request):
 @login_required
 def change_level(request, slug):
     level = get_object_or_404(Level, slug=slug)
+    if level.author != request.user:
+        return HttpResponseForbidden('You do not have permissions to edit this level.')
     if request.method == "POST":
         form = LevelForm(request, data=request.POST, instance=level)
         if form.is_valid():
