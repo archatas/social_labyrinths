@@ -51,6 +51,11 @@ def level_detail(request, slug):
     return render(request, 'levels/level_detail.html', {'level': level})
 
 
+def level_project_json(request, slug):
+    level = get_object_or_404(Level, slug=slug)
+    return render(request, 'levels/level_project_json.js', {'level': level})
+
+
 @login_required
 def add_level(request):
     if request.method == "POST":
