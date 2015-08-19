@@ -13,7 +13,7 @@
         var labyrinth = JSON.parse('{{ level.render_labyrinth_json }}');
     </script>
 
-    <canvas id="gameCanvas" width="1000" height="600"></canvas>
+    <canvas id="gameCanvas"></canvas>
 {% endblock %}
 
 {% block extrabody %}
@@ -24,6 +24,7 @@
         var KEY_RIGHT_CODE = 39;
         var KEY_UP_CODE = 38;
         var KEY_DOWN_CODE = 40;
+        var TILE_SIZE = 35;
         var level_title = '{{ level.title }}';
         var sprites = {
             '#': STATIC_URL + 'site/img/brick.png',
