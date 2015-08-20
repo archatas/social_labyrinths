@@ -53,7 +53,7 @@ def level_detail(request, slug):
 
 def level_project_json(request, slug):
     level = get_object_or_404(Level, slug=slug)
-    return render(request, 'levels/level_project_json.js', {'level': level})
+    return render(request, 'levels/level_project_json.json', {'level': level})
 
 
 @login_required

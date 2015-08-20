@@ -104,6 +104,8 @@ var GameScene = cc.Scene.extend({
         TILE_SIZE = 640 / labyrinth[0].length;
 
         //add three layer in the right order
+        var gradient = cc.LayerGradient.create(cc.color(0,0,0,255), cc.color(0,0,255,255));
+        this.addChild(gradient);
         this.addChild(new BackgroundLayer());
         this.addChild(new AnimationLayer(this.space));
         //this.addChild(new StatusLayer());
@@ -174,6 +176,7 @@ var GameScene = cc.Scene.extend({
                 player_position[0]--;
                 //create the move action
                 var actionTo = new cc.MoveTo(0.3, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
+                player_sprite.setFlippedX(true);
                 player_sprite.runAction(new cc.Sequence(actionTo));
             }
         }
@@ -183,6 +186,7 @@ var GameScene = cc.Scene.extend({
                 //create the move action
                 player_position[0]++;
                 var actionTo = new cc.MoveTo(0.3, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
+                player_sprite.setFlippedX(false);
                 player_sprite.runAction(new cc.Sequence(actionTo));
             }
         }
