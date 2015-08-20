@@ -85,7 +85,10 @@ var StatusLayer = cc.Layer.extend({
         this.addChild(this.labelMeter);
     }
 });
+
 var state = {};
+var player_anim_in_progress = false;
+
 var GameScene = cc.Scene.extend({
     ctor: function(space) {
         this._super();
@@ -150,46 +153,10 @@ var GameScene = cc.Scene.extend({
         }
         this.scheduleUpdate();
     },
-    movePlayer: function() {
+    afterAnim: function() {
+        var that = this;
+        player_anim_in_progress = false;
         var win_size = cc.director.getWinSize();
-        if (state.isSwipeUp) {
-            console.log("up");
-            //create the move action
-            if (labyrinth[player_position[1]-1][player_position[0]] != '#') {
-                player_position[1]--;
-                var actionTo = new cc.MoveTo(0.3, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
-                player_sprite.runAction(new cc.Sequence(actionTo));
-            }
-        }
-        if (state.isSwipeDown) {
-            console.log("down");
-            if (labyrinth[player_position[1]+1][player_position[0]] != '#') {
-                player_position[1]++;
-                //create the move action
-                var actionTo = new cc.MoveTo(0.3, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
-                player_sprite.runAction(new cc.Sequence(actionTo));
-            }
-        }
-        if (state.isSwipeLeft) {
-            console.log("left");
-            if (labyrinth[player_position[1]][player_position[0]-1] != '#') {
-                player_position[0]--;
-                //create the move action
-                var actionTo = new cc.MoveTo(0.3, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
-                player_sprite.setFlippedX(true);
-                player_sprite.runAction(new cc.Sequence(actionTo));
-            }
-        }
-        if (state.isSwipeRight) {
-            console.log("right");
-            if (labyrinth[player_position[1]][player_position[0]+1] != '#') {
-                //create the move action
-                player_position[0]++;
-                var actionTo = new cc.MoveTo(0.3, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
-                player_sprite.setFlippedX(false);
-                player_sprite.runAction(new cc.Sequence(actionTo));
-            }
-        }
         for (var i=0; i<collectables_positions.length; i++) {
             if (collectables_positions[i][0] == player_position[0] && collectables_positions[i][1] == player_position[1]) {
                 collectables_positions.splice(i, 1);
@@ -201,8 +168,58 @@ var GameScene = cc.Scene.extend({
             if (!collectables_positions.length) {
                 var label = cc.LabelTTF.create("Congratulations! You won!", "Arial", 40);
                 label.setPosition(win_size.width / 2, win_size.height / 2);
-                this.addChild(label, 1);
+                that.addChild(label, 1);
             }
+        }
+    },
+    movePlayer: function() {
+        var that = this;
+        if (player_anim_in_progress) {
+            return;
+        }
+
+        var win_size = cc.director.getWinSize();
+        if (state.isSwipeUp) {
+            console.log("up");
+            if (labyrinth[player_position[1]-1][player_position[0]] != '#') {
+                player_anim_in_progress = true;
+                player_position[1]--;
+                // create the move action
+                var actionTo = new cc.MoveTo(0.25, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
+                player_sprite.runAction(new cc.Sequence(actionTo, new cc.CallFunc(that.afterAnim, that)));
+            }
+        }
+        if (state.isSwipeDown) {
+            console.log("down");
+            if (labyrinth[player_position[1]+1][player_position[0]] != '#') {
+                player_anim_in_progress = true;
+                player_position[1]++;
+                // create the move action
+                var actionTo = new cc.MoveTo(0.25, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
+                player_sprite.runAction(new cc.Sequence(actionTo, new cc.CallFunc(that.afterAnim, that)));
+             }
+        }
+        if (state.isSwipeLeft) {
+            console.log("left");
+            if (labyrinth[player_position[1]][player_position[0]-1] != '#') {
+                player_anim_in_progress = true;
+                player_position[0]--;
+                // create the move action
+                var actionTo = new cc.MoveTo(0.25, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
+                player_sprite.setFlippedX(true);
+                player_sprite.runAction(new cc.Sequence(actionTo, new cc.CallFunc(that.afterAnim, that)));
+             }
+        }
+        if (state.isSwipeRight) {
+            console.log("right");
+            if (labyrinth[player_position[1]][player_position[0]+1] != '#') {
+                player_anim_in_progress = true;
+                player_position[0]++;
+                // create the move action
+                var actionTo = new cc.MoveTo(0.25, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
+                player_sprite.setFlippedX(false);
+                player_sprite.runAction(new cc.Sequence(actionTo, new cc.CallFunc(that.afterAnim, that)));
+             }
         }
     },
     update: function (dt) { // this is called in a loop
