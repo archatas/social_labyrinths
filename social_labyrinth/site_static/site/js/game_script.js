@@ -93,6 +93,7 @@ var GameScene = cc.Scene.extend({
     ctor: function(space) {
         this._super();
         this.space = space;
+        this.audioEngine = cc.audioEngine;
         this.init();
     },
     initPhysics: function() {
@@ -159,13 +160,16 @@ var GameScene = cc.Scene.extend({
         var win_size = cc.director.getWinSize();
         for (var i=0; i<collectables_positions.length; i++) {
             if (collectables_positions[i][0] == player_position[0] && collectables_positions[i][1] == player_position[1]) {
+                this.audioEngine.playEffect(STATIC_URL + 'site/audio/collected.mp3');
                 collectables_positions.splice(i, 1);
                 collectables_sprites[i].removeFromParent();
                 collectables_sprites.splice(i, 1);
+                continue;
             }
         }
         if (labyrinth[player_position[1]][player_position[0]] == "e") {
             if (!collectables_positions.length) {
+                this.audioEngine.playEffect(STATIC_URL + 'site/audio/you-won.mp3');
                 var label = cc.LabelTTF.create("Congratulations! You won!", "Arial", 40);
                 label.setPosition(win_size.width / 2, win_size.height / 2);
                 that.addChild(label, 1);
@@ -185,7 +189,7 @@ var GameScene = cc.Scene.extend({
                 player_anim_in_progress = true;
                 player_position[1]--;
                 // create the move action
-                var actionTo = new cc.MoveTo(0.25, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
+                var actionTo = cc.moveTo(0.25, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE)).easing(cc.easeInOut(1));
                 player_sprite.runAction(new cc.Sequence(actionTo, new cc.CallFunc(that.afterAnim, that)));
             }
         }
@@ -195,9 +199,9 @@ var GameScene = cc.Scene.extend({
                 player_anim_in_progress = true;
                 player_position[1]++;
                 // create the move action
-                var actionTo = new cc.MoveTo(0.25, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
+                var actionTo = cc.moveTo(0.25, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE)).easing(cc.easeInOut(1));
                 player_sprite.runAction(new cc.Sequence(actionTo, new cc.CallFunc(that.afterAnim, that)));
-             }
+            }
         }
         if (state.isSwipeLeft) {
             console.log("left");
@@ -205,10 +209,10 @@ var GameScene = cc.Scene.extend({
                 player_anim_in_progress = true;
                 player_position[0]--;
                 // create the move action
-                var actionTo = new cc.MoveTo(0.25, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
+                var actionTo = cc.moveTo(0.25, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE)).easing(cc.easeInOut(1));
                 player_sprite.setFlippedX(true);
                 player_sprite.runAction(new cc.Sequence(actionTo, new cc.CallFunc(that.afterAnim, that)));
-             }
+            }
         }
         if (state.isSwipeRight) {
             console.log("right");
@@ -216,10 +220,10 @@ var GameScene = cc.Scene.extend({
                 player_anim_in_progress = true;
                 player_position[0]++;
                 // create the move action
-                var actionTo = new cc.MoveTo(0.25, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE));
+                var actionTo = cc.moveTo(0.25, cc.p(player_position[0] * TILE_SIZE, win_size.height - player_position[1] * TILE_SIZE)).easing(cc.easeInOut(1));
                 player_sprite.setFlippedX(false);
                 player_sprite.runAction(new cc.Sequence(actionTo, new cc.CallFunc(that.afterAnim, that)));
-             }
+            }
         }
     },
     update: function (dt) { // this is called in a loop
