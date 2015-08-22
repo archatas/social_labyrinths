@@ -173,6 +173,7 @@ var GameScene = cc.Scene.extend({
                 var label = cc.LabelTTF.create("Congratulations! You won!", "Arial", 40);
                 label.setPosition(win_size.width / 2, win_size.height / 2);
                 that.addChild(label, 1);
+                that.schedule(function() {that.removeChild(label)}, 2);
             }
         }
     },
